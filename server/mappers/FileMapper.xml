@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="FileMapper">
+	<select id="selectList">
+		SELECT qna_id, origin_name, path, type, size FROM file
+	</select>
+	<select id="selectItem">
+		SELECT qna_id, origin_name, path, type, size FROM file WHERE qna_id=#{id}
+	</select>
+	<insert id="insertItem">
+		INSERT INTO file (qna_id, origin_name, path, type, size, reg_date, edit_date) VALUES (#{qna_id}, #{origin_name}, #{path}, #{type}, #{size}, #{reg_date}, #{edit_date})
+	</insert>
+	<delete id="deleteItem">
+		DELETE FROM file WHERE qna_id=#{id}
+	</delete>
+</mapper>

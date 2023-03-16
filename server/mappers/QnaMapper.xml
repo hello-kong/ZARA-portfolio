@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="QnaMapper">
+	<select id="selectList">
+		SELECT q.id, q.title, CONVERT(q.content USING utf8) AS content, q.edit_date, q.qna_type, CONVERT(q.answer USING utf8) AS answer, m.name, f.path FROM qna AS q
+		LEFT OUTER JOIN members AS m ON q.members_id=m.id
+		LEFT OUTER JOIN file AS f ON q.id=f.qna_id
+		<where>
+			<if test="name != null and name != ''">
+				m.name LIKE concat('%', #{name}, '%')
+			</if>
+
+			<if test="title != null and title != ''">
+				OR q.title LIKE concat('%', #{title}, '%')
+			</if>
+
+			<if test="content != null and content != ''">
+				OR q.content LIKE concat('%', #{content}, '%')
+			</if>
+
+			<if test="isNull != null and isNull == 'true'">
+				OR q.answer IS NULL
+			</if>
+			
+			<if test="isNull != null and isNull == 'false'">
+				OR q.answer IS NOT NULL
+			</if>
+		</where>
+			ORDER BY id DESC
+			<if test="listCount != 0">
+            	LIMIT ${offset}, ${listCount}
+        	</if>
+	</select>
+
+	<select id="selectItem">
+		SELECT q.id, q.title, CONVERT(q.content USING utf8) AS content, q.edit_date, q.qna_type, CONVERT(q.answer USING utf8) AS answer, q.answer_date, m.name, f.path FROM qna AS q
+		LEFT OUTER JOIN members AS m ON q.members_id=m.id
+		LEFT OUTER JOIN file AS f ON q.id=f.qna_id
+		WHERE q.id=#{id}
+	</select>
+
+	<select id="selectNum">
+  		SELECT q.id, q.title, CONVERT(q.content USING utf8) AS content, q.edit_date, q.qna_type, CONVERT(q.answer USING utf8) AS answer, q.answer_date, m.name, f.path FROM qna AS q
+  		LEFT OUTER JOIN members AS m ON q.members_id=m.id
+  		LEFT OUTER JOIN file AS f ON q.id=f.qna_id
+  		WHERE q.id IN ((SELECT id FROM qna WHERE id&lt;#{id} ORDER BY id DESC LIMIT 1), (SELECT id FROM qna WHERE id&gt;#{id} ORDER BY id ASC LIMIT 1))
+  	</select>
+
+	<insert id="insertItem">
+		INSERT INTO qna (title, content, reg_date, edit_date, qna_type, members_id) VALUES (#{title}, #{content}, #{reg_date}, #{edit_date}, #{qna_type}, #{members_id})
+	</insert>
+
+	<delete id="deleteItem">
+		DELETE FROM qna WHERE id=#{id}
+	</delete>
+
+	<update id="updateItem">
+		UPDATE qna SET title=#{title}, content=#{content}, edit_date=#{edit_date}, qna_type=#{qna_type} WHERE id=#{id}
+	</update>
+
+	<update id="updateAnswer">
+		UPDATE qna SET answer=#{answer}, answer_date=#{answer_date} WHERE id=#{id}
+	</update>
+
+	<select id="selectCountAll">
+        SELECT COUNT(*) AS cnt FROM qna q
+		LEFT OUTER JOIN members AS m ON q.members_id=m.id
+		
+        <where>
+			<if test="name != null and name != ''">
+				m.name LIKE concat('%', #{name}, '%')
+			</if>
+
+			<if test="title != null and title != ''">
+				OR q.title LIKE concat('%', #{title}, '%')
+			</if>
+
+			<if test="content != null and content != ''">
+				OR q.content LIKE concat('%', #{content}, '%')
+			</if>
+
+			<if test="isNull != null and isNull == 'true'">
+				OR q.answer IS NULL
+			</if>
+			
+			<if test="isNull != null and isNull == 'false'">
+				OR q.answer IS NOT NULL
+			</if>
+		</where>
+    </select>
+</mapper>

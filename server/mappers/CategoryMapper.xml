@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CategoryMapper">
+	<select id="selectDepth1">
+		SELECT id, depth1 FROM c_depth1
+	</select>
+
+	<select id="selectDepth2">
+		SELECT d1.id AS depth1_id, d2.id AS depth2_id, d1.depth1, d2.depth2 FROM c_depth2 AS d2
+		INNER JOIN c_depth1 AS d1 ON d1.id=d2.depth1_id
+	</select>
+
+	<insert id="insertDepth1">
+		INSERT INTO c_depth1 (depth1) VALUES (#{depth1})
+	</insert>
+
+	<insert id="insertDepth2">
+		INSERT INTO c_depth2 (depth2, depth1_id) VALUES (#{depth2}, #{depth1_id})
+	</insert>
+
+	<update id="updateDepth1">
+		UPDATE c_depth1 SET depth1=#{depth1} WHERE id=#{id}
+	</update>
+
+	<update id="updateDepth2">
+		UPDATE c_depth2 SET depth2=#{depth2} WHERE id=#{id}
+	</update>
+
+	<delete id="deleteDepth1">
+		DELETE FROM c_depth1 WHERE id=#{id}
+	</delete>
+
+	<delete id="deleteDepth2">
+		DELETE FROM c_depth2
+
+		<where>
+			<if test="depth1_id != null and depth1_id != ''">
+				depth1_id=#{depth1_id}
+			</if>
+
+			<if test="id != null and id != ''">
+				id=#{id}
+			</if>
+		</where>
+		
+	</delete>
+</mapper>

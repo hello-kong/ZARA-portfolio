@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+	<select id="selectList">
+		SELECT p.id, p.name, p.price, p.use_amount, p.reg_date, p.depth2_id, CONVERT(p.dsc USING utf8) AS dsc, dt.depth2, do.depth1 FROM product AS p
+		INNER JOIN c_depth2 AS dt ON dt.id=p.depth2_id
+		INNER JOIN c_depth1 AS do ON dt.depth1_id=do.id
+		<where>
+			<if test="search != null and search != ''">
+				(p.name LIKE concat('%', #{search}, '%')
+				OR p.id LIKE concat('%', #{search}, '%'))
+			</if>
+
+			<if test="depth2 != null and depth2 != ''">
+				AND dt.id=#{depth2}
+			</if>
+
+		</where>
+			ORDER BY id DESC
+			<if test="listCount != 0">
+            	LIMIT ${offset}, ${listCount}
+        	</if>
+	</select>
+
+	<select id="selectItem">
+		SELECT p.id, p.name, p.price, p.use_amount, CONVERT(p.dsc USING utf8) AS dsc, p.reg_date, dt.depth2, do.depth1, p.depth2_id, do.id AS depth1_id FROM product AS p
+		INNER JOIN c_depth2 AS dt ON dt.id=p.depth2_id
+		INNER JOIN c_depth1 AS do ON dt.depth1_id=do.id
+		WHERE p.id=#{id}
+	</select>
+
+	<insert id="insertItem">
+		INSERT INTO product (name, price, dsc, use_amount, reg_date, depth2_id) VALUES (#{name}, #{price}, #{dsc}, #{use_amount}, #{reg_date}, #{depth2_id})
+	</insert>
+
+	<delete id="deleteItem">
+		DELETE FROM product WHERE id=#{id}
+	</delete>
+
+	<update id="updateItem">
+		UPDATE product SET name=#{name}, price=#{price}, dsc=#{dsc}, use_amount=#{use_amount}, depth2_id=#{depth2_id} WHERE id=#{id}
+	</update>
+
+	<select id="selectCountAll">
+        SELECT COUNT(*) AS cnt FROM product AS p
+		INNER JOIN c_depth2 AS dt ON dt.id=p.depth2_id
+		INNER JOIN c_depth1 AS do ON dt.depth1_id=do.id
+		
+        <where>
+			<if test="name != null and name != ''">
+				p.name LIKE concat('%', #{name}, '%')
+			</if>
+
+			<if test="id != null and id != ''">
+				OR p.id LIKE concat('%', #{id}, '%')
+			</if>
+
+		</where>
+    </select>
+</mapper>

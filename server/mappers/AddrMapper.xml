@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AddrMapper">
+	<select id="selectList">
+		SELECT a.id, a.addname, a.postcode, a.roadaddr, a.detailaddr, a.tel from address a
+		INNER JOIN members m on m.id=a.members_id
+
+	</select>
+
+	<insert id="insertItem">
+		INSERT INTO address (addname, postcode, roadaddr, detailaddr, tel ) VALUES (#{addname}, #{postcode}, #{roadaddr}, #{detailaddr}, #{tel})
+	</insert>
+
+	<delete id="deleteItem">
+		DELETE FROM address WHERE id=#{id}
+	</delete>
+
+	<update id="updateItem">
+		UPDATE address SET addname=#{addname}, postcode=#{postcode}, roadaddr=#{roadaddr}, detailaddr=#{detailaddr}, tel=#{tel} WHERE id=#{id}
+	</update>
+
+</mapper>

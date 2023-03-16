@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MembersMapper">
+	<select id="selectList">
+		SELECT id, name, email, tel, postcode, roadaddr, detailaddr, reg_date, is_out FROM members
+		<where>
+			<if test="name != null and name != ''">
+				name LIKE concat('%', #{name}, '%')
+			</if>
+
+			<if test="email != null and email != ''">
+				OR email LIKE concat('%', #{email}, '%')
+			</if>
+			
+		</where>
+			<if test="listCount != 0">
+            	LIMIT ${offset}, ${listCount}
+        	</if>
+	</select>
+
+	<select id="selectItem">
+		SELECT id, name, email, password, gender, birthdate, tel, postcode, roadaddr, detailaddr, is_out, reg_date, edit_date FROM members WHERE id=#{id}
+	</select>
+
+	<insert id="insertItem">
+		INSERT INTO members (name, email, password, gender, birthdate, tel, postcode, roadaddr, detailaddr, reg_date, edit_date) VALUES (#{name}, #{email}, #{password}, #{gender}, #{birthdate}, #{tel}, #{postcode}, #{roadaddr}, #{detailaddr}, #{reg_date}, #{edit_date});
+	</insert>
+
+	<select id="selectCountAll">
+        SELECT COUNT(*) AS cnt FROM members
+		
+        <where>
+			<if test="name != null and name != ''">
+				name LIKE concat('%', #{name}, '%')
+			</if>
+
+			<if test="email != null and email != ''">
+				OR email LIKE concat('%', #{email}, '%')
+			</if>
+		</where>
+    </select>
+</mapper>
